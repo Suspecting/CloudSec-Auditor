@@ -237,14 +237,21 @@ reports/.gitkeep
 
 ## Screenshots
 
-Add final screenshots before publishing:
+### Hero Dashboard
 
-```text
-screenshots/hero-dashboard.png
-screenshots/findings-explorer.png
-screenshots/reports-section.png
-screenshots/html-report.png
-```
+![Hero Dashboard](screenshots/hero-dashboard.png)
+
+### Findings Explorer
+
+![Findings Explorer](screenshots/findings-explorer.png)
+
+### Reports Section
+
+![Reports Section](screenshots/reports-section.png)
+
+### HTML Report
+
+![HTML Report](screenshots/html-report.png)
 
 ---
 
