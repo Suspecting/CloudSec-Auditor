@@ -1,0 +1,72 @@
+# =========================
+# CloudSec Auditor ignores
+# =========================
+
+# Python virtual environments
+backend/.venv/
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment / secrets
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+credentials
+config.json
+
+# AWS local credentials - never commit
+.aws/
+aws-credentials/
+*.aws
+
+# Node / frontend
+desktop/frontend/node_modules/
+node_modules/
+desktop/frontend/dist/
+desktop/frontend/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build / cache
+dist/
+build/
+.cache/
+coverage/
+
+# Generated reports
+reports/*.json
+reports/*.html
+reports/*.md
+
+# Keep reports folder structure
+!reports/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
