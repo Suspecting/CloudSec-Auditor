@@ -46,6 +46,7 @@ It simulates AWS security checks across IAM, S3, EC2, CloudTrail, encryption, an
 * Latest report viewer from frontend
 * JSON, HTML, and Markdown report generation
 * Report metadata survives page refresh
+* Helper scripts for local setup and development
 * Local-first security design
 
 ---
@@ -103,6 +104,13 @@ CloudSec-Auditor/
 │   └── .gitkeep
 │
 ├── screenshots/
+├── scripts/
+│   ├── clean_reports.sh
+│   ├── run_backend.sh
+│   ├── run_frontend.sh
+│   ├── setup_backend.sh
+│   └── setup_frontend.sh
+│
 ├── .gitignore
 └── README.md
 ```
@@ -155,7 +163,63 @@ Each finding includes:
 
 ---
 
-## Backend Setup
+## Quick Start with Helper Scripts
+
+CloudSec Auditor includes helper scripts for easier local setup and development.
+
+### Backend Setup
+
+```bash
+./scripts/setup_backend.sh
+```
+
+### Run Backend
+
+```bash
+./scripts/run_backend.sh
+```
+
+The backend runs at:
+
+```text
+http://127.0.0.1:8000
+```
+
+FastAPI docs:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+### Frontend Setup
+
+Open another terminal:
+
+```bash
+./scripts/setup_frontend.sh
+```
+
+### Run Frontend
+
+```bash
+./scripts/run_frontend.sh
+```
+
+The frontend runs at:
+
+```text
+http://localhost:5173
+```
+
+### Clean Generated Reports
+
+```bash
+./scripts/clean_reports.sh
+```
+
+---
+
+## Manual Backend Setup
 
 Open a terminal in the project root:
 
@@ -181,7 +245,7 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## Frontend Setup
+## Manual Frontend Setup
 
 Open another terminal:
 
@@ -281,6 +345,7 @@ This project currently includes:
 * Report generation
 * Latest report serving
 * API status indicator
+* Helper scripts
 * GitHub-ready project structure
 
 ---
