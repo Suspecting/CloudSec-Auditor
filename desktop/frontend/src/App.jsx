@@ -1755,7 +1755,7 @@ function App() {
       <div className="fixed inset-0 z-0 overflow-hidden">
         <video
           className="h-full w-full object-cover opacity-70"
-          src="/background/video2.mp4"
+          src={`${import.meta.env.BASE_URL}background/video2.mp4`}
           autoPlay
           muted
           loop
