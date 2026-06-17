@@ -78,3 +78,11 @@ logs/
 # Runtime logs
 logs/
 *.log
+
+# Electron build outputs
+desktop/frontend/release/
+desktop/frontend/dist/
+
+# Electron build outputs
+desktop/frontend/release/
+desktop/frontend/dist/
