@@ -69,7 +69,7 @@ It simulates AWS security checks across IAM, S3, EC2, CloudTrail, encryption, an
 * Uvicorn
 * Pydantic
 * pathlib
-* boto3 planned for real AWS read-only mode
+* boto3 active for real AWS read-only mode
 
 ---
 
@@ -387,3 +387,75 @@ Planned improvements:
 ## Disclaimer
 
 This project is built for defensive cloud security auditing, learning, and portfolio demonstration. It should only be used on cloud accounts and environments where proper authorization exists.
+
+<!-- REAL_AWS_MODE_START -->
+## Real AWS Read-Only Mode
+
+CloudSec Auditor supports real AWS read-only security scanning through a local AWS CLI profile. The backend validates the selected profile, confirms AWS identity through STS, and runs defensive checks without exposing credential values.
+
+### Implemented Real AWS Checks
+
+| Service | Check | Purpose |
+|---|---|---|
+| IAM | Account password policy | Detects missing IAM password policy controls |
+| IAM | Console user MFA | Detects IAM users with console access but no MFA |
+| IAM | Access key age | Detects active access keys older than 90 days |
+| S3 | Block Public Access | Checks whether buckets block public access |
+| S3 | Default encryption | Checks whether buckets enforce server-side encryption |
+| S3 | Bucket versioning | Checks whether buckets have versioning enabled |
+| EC2 | Public SSH exposure | Detects security groups exposing TCP/22 publicly |
+| EC2 | Public RDP exposure | Detects security groups exposing TCP/3389 publicly |
+
+### Security Model
+
+CloudSec Auditor is designed for defensive and authorized auditing only.
+
+- Uses local AWS CLI profiles
+- Uses read-only AWS API calls
+- Does not print or store AWS access keys
+- Does not expose secret keys or session tokens
+- Does not modify, create, or delete AWS resources
+- Masks sensitive account identity details in API responses
+
+Recommended AWS permissions for testing:
+
+    SecurityAudit
+    ViewOnlyAccess
+
+Do not use root credentials. Do not commit `.aws/`, access keys, screenshots of secrets, or raw AWS credential files.
+
+### AWS Profile Setup
+
+Configure a local AWS CLI profile:
+
+    aws configure --profile cloudsec-auditor
+
+Validate the configured profile:
+
+    aws sts get-caller-identity --profile cloudsec-auditor
+
+### Backend Endpoints
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/aws/profiles` | Lists local AWS CLI profile names safely |
+| `GET /api/aws/profiles/{profile_name}/validate` | Validates a selected AWS profile through STS |
+| `GET /api/scan/aws/{profile_name}` | Runs real AWS read-only IAM, S3, and EC2 checks |
+| `GET /api/scan/mock` | Runs demo/mock scan data |
+
+### Example Real AWS Scan Result
+
+A fresh AWS account may return a result similar to:
+
+    total_checks: 23
+    passed: 22
+    failed: 1
+    critical: 0
+    risk_score: 8
+
+The most common initial finding is a missing IAM account password policy.
+
+### Current Limitation
+
+Real AWS scanning is implemented for IAM, S3, and EC2 security group checks. Report export is still based on the mock report pipeline and will be upgraded to support real AWS scan results in a future step.
+<!-- REAL_AWS_MODE_END -->
