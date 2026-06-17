@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter
 
 from core.config import settings
+from schemas.response_models import ApiStatusResponse, HealthResponse, RootResponse
 
 router = APIRouter()
 
@@ -20,7 +21,7 @@ def count_generated_reports():
     return len(report_files)
 
 
-@router.get("/")
+@router.get("/", response_model=RootResponse)
 def root():
     return {
         "app": settings.app_name,
@@ -30,7 +31,7 @@ def root():
     }
 
 
-@router.get("/health")
+@router.get("/health", response_model=HealthResponse)
 def health_check():
     return {
         "status": "healthy",
@@ -38,7 +39,7 @@ def health_check():
     }
 
 
-@router.get("/api/status")
+@router.get("/api/status", response_model=ApiStatusResponse)
 def get_api_status():
     """
     Returns backend runtime status for the frontend dashboard.

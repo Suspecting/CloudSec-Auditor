@@ -5,11 +5,12 @@ from fastapi import APIRouter
 from cloudsec.mock_data import get_mock_findings
 from cloudsec.risk_score import calculate_summary
 from core.config import settings
+from schemas.response_models import ScanResponse
 
 router = APIRouter()
 
 
-@router.get("/api/scan/mock")
+@router.get("/api/scan/mock", response_model=ScanResponse)
 def run_mock_scan():
     """
     Runs a mock AWS security scan.

@@ -8,6 +8,7 @@ from cloudsec.mock_data import get_mock_findings
 from cloudsec.risk_score import calculate_summary
 from cloudsec.report_generator import generate_all_reports
 from core.config import settings
+from schemas.response_models import GenerateReportsResponse, LatestReportsResponse
 
 router = APIRouter()
 
@@ -64,7 +65,7 @@ def get_latest_report_file(report_type: str):
     return report_files[0]
 
 
-@router.get("/api/reports/generate/mock")
+@router.get("/api/reports/generate/mock", response_model=GenerateReportsResponse)
 def generate_mock_reports():
     """
     Generates JSON, HTML, and Markdown reports from mock scan data.
@@ -91,7 +92,7 @@ def generate_mock_reports():
     }
 
 
-@router.get("/api/reports/latest")
+@router.get("/api/reports/latest", response_model=LatestReportsResponse)
 def get_latest_reports():
     """
     Returns latest generated report filenames, access URLs, and export time.
