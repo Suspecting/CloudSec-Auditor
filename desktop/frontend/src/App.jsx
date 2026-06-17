@@ -161,7 +161,7 @@ function ProductPreview({ scanResult, scanError, isScanning, lastScanAt }) {
   const criticalCount = hasScanResult ? summary?.critical ?? 0 : 0;
   const passedCount = hasScanResult ? summary?.passed ?? 0 : 0;
   const failedCount = hasScanResult ? summary?.failed ?? 0 : 0;
-  const dataSource = hasScanResult ? "Live Mock API" : "No scan yet";
+  const dataSource = hasScanResult ? "Real AWS Read-Only API" : "No scan yet";
 
   const lastScanLabel = lastScanAt
     ? lastScanAt.toLocaleTimeString([], {
@@ -280,7 +280,7 @@ function ProductPreview({ scanResult, scanError, isScanning, lastScanAt }) {
             <div className="rounded-2xl border border-white/10 bg-black/45 p-4">
               <div className="mb-3 flex items-center gap-2">
                 <Terminal className="h-4 w-4 text-cyan-300" />
-                <p className="font-mono text-xs text-slate-300">cloudsec-auditor scan --mode mock</p>
+                <p className="font-mono text-xs text-slate-300">cloudsec-auditor scan --mode aws-readonly</p>
               </div>
 
               <div className="space-y-1.5 font-mono text-xs">
@@ -329,7 +329,7 @@ function ProductPreview({ scanResult, scanError, isScanning, lastScanAt }) {
                   <Terminal className="mx-auto mb-3 h-6 w-6 text-cyan-300" />
                   <p className="font-bold text-white">No findings loaded yet</p>
                   <p className="mt-2 text-xs leading-5 text-slate-500">
-                    Run Mock Scan to load prioritized AWS findings from the backend.
+                    Run AWS Scan to load prioritized AWS findings from the backend.
                   </p>
                 </div>
               ) : (
@@ -593,7 +593,7 @@ function FindingsExplorerSection({ scanResult }) {
             <Terminal className="mx-auto mb-4 h-8 w-8 text-cyan-300" />
             <p className="font-black text-white">No scan results yet</p>
             <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-400">
-              Click Run Mock Scan first. The backend will return findings, generate
+              Click Run AWS Scan first. The backend will return findings, generate
               reports, and this section will show the full result set.
             </p>
           </div>
@@ -1121,7 +1121,7 @@ function ReportsSection({
               <FileText className="mx-auto mb-4 h-8 w-8 text-cyan-300" />
               <p className="font-black text-white">No report preview yet</p>
               <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-400">
-                Run Mock Scan to generate scan data, timestamped exports, and a live report preview.
+                Run AWS Scan to generate scan data, timestamped exports, and a live report preview.
               </p>
             </div>
           )}
@@ -1709,35 +1709,35 @@ function App() {
       setScanError("");
       setToast(null);
 
-      const scanResponse = await axios.get(`${API_BASE_URL}/api/scan/mock`);
+      if (!selectedAwsProfile) {
+        throw new Error("No AWS profile selected. Refresh profiles first.");
+      }
 
-      const completedAt = new Date();
-
-      setScanResult(scanResponse.data);
-      setLastScanAt(completedAt);
-
-      const reportResponse = await axios.get(
-        `${API_BASE_URL}/api/reports/generate/mock`
+      const scanResponse = await axios.get(
+        `${API_BASE_URL}/api/scan/aws/${encodeURIComponent(selectedAwsProfile)}`
       );
 
-      setReportExport(reportResponse.data);
+      setScanResult(scanResponse.data);
+      setLastScanAt(new Date());
+      setReportExport(null);
 
       const summary = scanResponse.data?.summary;
-      const exportedAt = reportResponse.data?.reports?.exported_at;
 
       showToast(
         "success",
-        "Scan and reports completed",
-        `${summary?.total_checks ?? 8} checks analyzed · Reports exported${exportedAt ? ` at ${exportedAt}` : ""}`
+        "AWS read-only scan completed",
+        `${summary?.total_checks ?? 0} real AWS checks analyzed safely.`
       );
     } catch (error) {
       const message =
-        "Backend is not reachable or report endpoint failed. Check FastAPI on http://127.0.0.1:8000";
+        error?.response?.data?.message ??
+        error?.response?.data?.detail ??
+        error?.message ??
+        "Backend is not reachable. Check FastAPI on http://127.0.0.1:8000";
 
-      setBackendStatus("offline");
       setScanError(message);
 
-      showToast("error", "Scan failed", message);
+      showToast("error", "AWS scan failed", message);
     } finally {
       setIsScanning(false);
     }
@@ -1811,7 +1811,7 @@ function App() {
               className="inline-flex items-center gap-2 rounded-full bg-cyan-300 px-6 py-3 font-black text-slate-950 shadow-2xl shadow-cyan-500/25 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-70"
             >
               <Play className="h-4 w-4 fill-slate-950" />
-              {isScanning ? "Scanning..." : "Run Mock Scan"}
+              {isScanning ? "Scanning..." : "Run AWS Scan"}
             </button>
 
             <button
