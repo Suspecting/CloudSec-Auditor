@@ -786,8 +786,8 @@ function WorkflowSection() {
       title: "Choose scan mode",
       icon: Cloud,
       description:
-        "Start with safe mock mode for demos, then switch to read-only AWS profile scanning later.",
-      detail: "Mock mode uses local demo findings. AWS mode will use boto3 and local AWS CLI profiles.",
+        "Start with a selected AWS CLI profile and run safe read-only AWS posture checks.",
+      detail: "AWS read-only mode uses boto3 and local AWS CLI profiles through the Python backend.",
     },
     {
       number: "02",
@@ -1086,7 +1086,7 @@ function ReportsSection({
               <p className="text-white"># CloudSec Auditor Report</p>
 
               <p className="text-slate-400">
-                Scan Target: <span className="text-cyan-200">demo-aws-account</span>
+                Scan Target: <span className="text-cyan-200">{scanResult?.scan_target ?? "cloudsec-auditor"}</span>
               </p>
 
               <p className="text-slate-400">
@@ -1164,7 +1164,7 @@ function FinalCTASection({
   const footerLinks = [
     {
       title: "Product",
-      links: ["Scanner", "Coverage", "Reports", "Mock Mode"],
+      links: ["Scanner", "Coverage", "Reports", "AWS Mode"],
     },
     {
       title: "Security",
@@ -1183,7 +1183,7 @@ function FinalCTASection({
         <div className="flex flex-col gap-5 border-b border-white/10 px-6 py-6 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-lg font-black text-white">
-              Ready to run a safe mock audit?
+              Ready to run a safe AWS read-only audit?
             </p>
 
             <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">
@@ -1197,11 +1197,11 @@ function FinalCTASection({
               </span>
 
               <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-slate-300">
-                Mode: {apiStatus?.mode ?? "mock"}
+                Mode: aws-read-only
               </span>
 
               <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-slate-300">
-                Engine: {apiStatus?.scan_engine ?? "mock"}
+                Engine: boto3 read-only
               </span>
             </div>
           </div>
@@ -1263,7 +1263,7 @@ function FinalCTASection({
                 Electron
               </span>
               <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-xs font-bold text-cyan-200">
-                boto3 planned
+                boto3 active
               </span>
             </div>
           </div>
@@ -1296,7 +1296,7 @@ function FinalCTASection({
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-2 text-xs text-emerald-300">
               <CheckCircle2 className="h-4 w-4" />
-              Mock mode does not use or store AWS credentials.
+              AWS read-only mode uses your local CLI profile and never exposes credential values.
             </div>
 
             <p className="text-xs text-slate-500">
@@ -1826,7 +1826,7 @@ function App() {
               className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-3 font-bold text-white backdrop-blur-xl transition hover:bg-white/10"
             >
               <FileText className="h-4 w-4" />
-              View Sample Report
+              View Latest Report
             </button>
 
           </div>

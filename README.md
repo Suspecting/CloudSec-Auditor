@@ -1,6 +1,6 @@
 # CloudSec Auditor
 
-**CloudSec Auditor** is a local-first AWS security misconfiguration scanner built with a **React + Vite frontend** and **FastAPI backend**. It audits AWS-style cloud security posture in safe mock mode, calculates a risk score, prioritizes findings, and generates timestamped **JSON, HTML, and Markdown** reports.
+**CloudSec Auditor** is a local-first AWS security misconfiguration scanner built with a **React + Vite frontend** and **FastAPI backend**. It audits AWS cloud security posture through a local read-only AWS CLI profile, calculates a risk score, prioritizes findings, and generates timestamped **JSON, HTML, and Markdown** reports.
 
 The project is designed for defensive cloud security learning, portfolio demonstration, interview explanation, and future extension into real AWS read-only auditing using `boto3`.
 
@@ -20,7 +20,7 @@ Delhi NCR, India
 
 ## Project Overview
 
-CloudSec Auditor helps identify and present common cloud security misconfigurations in a clean dashboard format. The current version runs in **mock mode**, which means it does not require AWS credentials and is safe for demos, screenshots, and local testing.
+CloudSec Auditor helps identify and present common cloud security misconfigurations in a clean dashboard format. The current version supports **real AWS read-only mode** using a local AWS CLI profile.
 
 It simulates AWS security checks across IAM, S3, EC2, CloudTrail, encryption, and network exposure areas, then generates audit-ready output with evidence and remediation guidance.
 
@@ -31,7 +31,7 @@ It simulates AWS security checks across IAM, S3, EC2, CloudTrail, encryption, an
 * Modern AWS-style security dashboard
 * FastAPI backend with structured scan APIs
 * React frontend with premium dark cybersecurity UI
-* Safe mock scan mode with no AWS credentials required
+* Real AWS read-only scan mode using a local AWS CLI profile
 * Risk score calculation based on severity
 * Prioritized findings with evidence and remediation
 * Findings Explorer with:
@@ -141,7 +141,7 @@ User clicks Scan
         ↓
 React frontend calls FastAPI backend
         ↓
-Backend returns mock AWS security findings
+Backend returns real AWS read-only security findings
         ↓
 Risk score is calculated
         ↓
@@ -156,7 +156,7 @@ Latest JSON, HTML, and Markdown reports become available
 
 ## Security Checks Covered
 
-Current mock checks include:
+Implemented read-only checks include:
 
 * S3 public bucket exposure
 * S3 bucket default encryption
@@ -287,8 +287,6 @@ http://localhost:5173
 | `/`                            |    GET | Root API information                            |
 | `/health`                      |    GET | Basic backend health check                      |
 | `/api/status`                  |    GET | Backend status, version, mode, and report count |
-| `/api/scan/mock`               |    GET | Runs mock AWS security scan                     |
-| `/api/reports/generate/mock`   |    GET | Generates JSON, HTML, and Markdown reports      |
 | `/api/reports/latest`          |    GET | Returns latest report metadata                  |
 | `/api/reports/latest/html`     |    GET | Opens latest HTML report                        |
 | `/api/reports/latest/json`     |    GET | Opens latest JSON report                        |
@@ -338,7 +336,7 @@ reports/.gitkeep
 
 ## Security Note
 
-CloudSec Auditor currently runs in mock mode and does not require AWS credentials.
+CloudSec Auditor currently supports real AWS read-only scanning through local AWS CLI profiles.
 
 No AWS access keys, secrets, or credentials are stored in the frontend. Real AWS mode is planned for a future version and should only use read-only AWS permissions through local AWS CLI profiles.
 
@@ -356,7 +354,7 @@ This project currently includes:
 
 * React dashboard
 * FastAPI backend
-* Mock scan engine
+* Real AWS read-only scan engine
 * Risk scoring
 * Findings explorer
 * Report generation
@@ -441,7 +439,6 @@ Validate the configured profile:
 | `GET /api/aws/profiles` | Lists local AWS CLI profile names safely |
 | `GET /api/aws/profiles/{profile_name}/validate` | Validates a selected AWS profile through STS |
 | `GET /api/scan/aws/{profile_name}` | Runs real AWS read-only IAM, S3, and EC2 checks |
-| `GET /api/scan/mock` | Runs demo/mock scan data |
 
 ### Example Real AWS Scan Result
 
@@ -457,5 +454,5 @@ The most common initial finding is a missing IAM account password policy.
 
 ### Current Limitation
 
-Real AWS scanning is implemented for IAM, S3, and EC2 security group checks. Report export is still based on the mock report pipeline and will be upgraded to support real AWS scan results in a future step.
+Real AWS scanning and report export are implemented for IAM, S3, and EC2 security group checks.
 <!-- REAL_AWS_MODE_END -->
