@@ -7,6 +7,7 @@ from core.config import settings
 from core.error_handlers import register_error_handlers
 from core.logging_config import configure_logging, get_logger
 from routes.report_routes import router as report_router
+from routes.aws_routes import router as aws_router
 from routes.scan_routes import router as scan_router
 from routes.status_routes import router as status_router
 
@@ -32,6 +33,7 @@ app.add_middleware(
 register_error_handlers(app)
 
 app.include_router(status_router)
+app.include_router(aws_router)
 app.include_router(scan_router)
 app.include_router(report_router)
 

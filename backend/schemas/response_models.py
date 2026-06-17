@@ -53,3 +53,10 @@ class ErrorResponse(BaseModel):
     message: str
     path: str
     details: Optional[list[dict[str, Any]]] = None
+
+
+class AwsProfilesResponse(BaseModel):
+    status: str
+    profiles: list[str]
+    count: int
+    credential_values_exposed: bool
