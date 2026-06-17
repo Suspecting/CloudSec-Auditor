@@ -2,6 +2,7 @@ const { app, BrowserWindow, shell } = require("electron");
 const { spawn } = require("child_process");
 const http = require("http");
 const path = require("path");
+const fs = require("fs");
 
 const isDev = !app.isPackaged;
 
@@ -12,8 +13,9 @@ const BACKEND_PORT = "8000";
 const BACKEND_URL = `http://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 let backendProcess = null;
+let backendLogFd = null;
 
-function waitForBackend(timeoutMs = 20000) {
+function waitForBackend(timeoutMs = 25000) {
   const startedAt = Date.now();
 
   return new Promise((resolve, reject) => {
@@ -29,6 +31,7 @@ function waitForBackend(timeoutMs = 20000) {
       });
 
       req.on("error", retry);
+
       req.setTimeout(1500, () => {
         req.destroy();
         retry();
@@ -48,58 +51,62 @@ function waitForBackend(timeoutMs = 20000) {
   });
 }
 
+function getBackendExecutable() {
+  if (isDev) {
+    return path.join(__dirname, "../../../backend/dist/cloudsec-backend");
+  }
+
+  const binaryName = process.platform === "win32"
+    ? "cloudsec-backend.exe"
+    : "cloudsec-backend";
+
+  return path.join(process.resourcesPath, "backend", binaryName);
+}
+
 function startBackend() {
   if (backendProcess) {
     return;
   }
 
-  const projectRoot = path.join(__dirname, "../../..");
-  const backendDir = path.join(projectRoot, "backend");
+  const backendExecutable = getBackendExecutable();
 
-  const pythonCandidates = process.platform === "win32"
-    ? ["python", "py"]
-    : [
-        path.join(backendDir, ".venv", "bin", "python"),
-        "python3",
-        "python",
-      ];
-
-  const args = [
-    "-m",
-    "uvicorn",
-    "main:app",
-    "--host",
-    BACKEND_HOST,
-    "--port",
-    BACKEND_PORT,
-  ];
-
-  for (const pythonCmd of pythonCandidates) {
-    try {
-      backendProcess = spawn(pythonCmd, args, {
-        cwd: backendDir,
-        env: {
-          ...process.env,
-          CLOUDSEC_DESKTOP_MODE: "1",
-          PYTHONUNBUFFERED: "1",
-        },
-        stdio: "ignore",
-        detached: false,
-      });
-
-      backendProcess.on("error", () => {
-        backendProcess = null;
-      });
-
-      backendProcess.on("exit", () => {
-        backendProcess = null;
-      });
-
-      return;
-    } catch {
-      backendProcess = null;
-    }
+  if (!fs.existsSync(backendExecutable)) {
+    console.error(`Backend executable not found: ${backendExecutable}`);
+    return;
   }
+
+  try {
+    fs.chmodSync(backendExecutable, 0o755);
+  } catch {
+    // Ignore chmod failures on platforms that do not need it.
+  }
+
+  const userDataDir = app.getPath("userData");
+  const backendWorkDir = path.join(userDataDir, "backend-runtime");
+  fs.mkdirSync(backendWorkDir, { recursive: true });
+
+  const logPath = path.join(userDataDir, "cloudsec-backend.log");
+  backendLogFd = fs.openSync(logPath, "a");
+
+  backendProcess = spawn(backendExecutable, [], {
+    cwd: backendWorkDir,
+    env: {
+      ...process.env,
+      CLOUDSEC_DESKTOP_MODE: "1",
+      PYTHONUNBUFFERED: "1",
+    },
+    stdio: ["ignore", backendLogFd, backendLogFd],
+    detached: false,
+  });
+
+  backendProcess.on("error", (error) => {
+    console.error("Backend process error:", error);
+    backendProcess = null;
+  });
+
+  backendProcess.on("exit", () => {
+    backendProcess = null;
+  });
 }
 
 function stopBackend() {
@@ -108,6 +115,16 @@ function stopBackend() {
   }
 
   backendProcess = null;
+
+  if (backendLogFd !== null) {
+    try {
+      fs.closeSync(backendLogFd);
+    } catch {
+      // Ignore close errors.
+    }
+
+    backendLogFd = null;
+  }
 }
 
 function createWindow() {
