@@ -1372,6 +1372,160 @@ function Toast({ toast, onClose }) {
   );
 }
 
+
+function AWSProfileStatusPanel({
+  awsProfiles,
+  selectedAwsProfile,
+  setSelectedAwsProfile,
+  awsProfileValidation,
+  awsProfileStatus,
+  isValidatingAwsProfile,
+  onValidateProfile,
+  onRefreshProfiles,
+}) {
+  const hasProfiles = awsProfiles.length > 0;
+  const isValid = awsProfileStatus === "valid";
+  const isError = awsProfileStatus === "error";
+
+  const statusLabel = isValid
+    ? "Validated"
+    : isError
+      ? "Validation failed"
+      : hasProfiles
+        ? "Ready to validate"
+        : "No profile found";
+
+  return (
+    <section
+      id="aws-profile"
+      className="relative z-10 mx-auto w-[min(980px,92vw)] px-6 py-16"
+    >
+      <div className="rounded-3xl border border-white/10 bg-white/[0.055] p-6 text-left shadow-2xl shadow-black/25 backdrop-blur-2xl">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.22em] text-cyan-100">
+              <Cloud className="h-3.5 w-3.5" />
+              AWS Read-Only Mode
+            </div>
+
+            <h2 className="mt-3 text-3xl font-black text-white">
+              AWS Profile Status
+            </h2>
+
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
+              Detect and validate local AWS CLI profiles safely. CloudSec Auditor does not expose access keys, secret keys, or session tokens.
+            </p>
+          </div>
+
+          <div
+            className={`inline-flex w-fit items-center gap-2 rounded-full border px-4 py-2 text-xs font-black ${
+              isValid
+                ? "border-emerald-300/30 bg-emerald-300/10 text-emerald-100"
+                : isError
+                  ? "border-red-300/30 bg-red-300/10 text-red-100"
+                  : "border-yellow-300/30 bg-yellow-300/10 text-yellow-100"
+            }`}
+          >
+            {isValid ? (
+              <CheckCircle2 className="h-4 w-4" />
+            ) : isError ? (
+              <AlertTriangle className="h-4 w-4" />
+            ) : (
+              <RefreshCw className="h-4 w-4" />
+            )}
+            {statusLabel}
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-4">
+          <div className="rounded-2xl border border-white/10 bg-slate-950/45 p-4">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+              Profiles Found
+            </p>
+            <p className="mt-2 text-3xl font-black text-white">
+              {awsProfiles.length}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-950/45 p-4 md:col-span-2">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+              Selected Profile
+            </p>
+
+            <select
+              value={selectedAwsProfile}
+              onChange={(event) => setSelectedAwsProfile(event.target.value)}
+              disabled={!hasProfiles}
+              className="mt-3 w-full rounded-xl border border-white/10 bg-slate-950/80 px-3 py-2 text-sm font-bold text-white outline-none transition focus:border-cyan-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {hasProfiles ? (
+                awsProfiles.map((profile) => (
+                  <option key={profile} value={profile}>
+                    {profile}
+                  </option>
+                ))
+              ) : (
+                <option value="">No AWS profile configured</option>
+              )}
+            </select>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-950/45 p-4">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+              Credentials Exposed
+            </p>
+            <p className="mt-2 text-2xl font-black text-emerald-200">
+              false
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border border-white/10 bg-slate-950/35 p-4">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+              Read-Only Safety
+            </p>
+            <p className="mt-2 text-sm font-bold text-slate-200">
+              {awsProfileValidation?.safe_for_read_only_scan
+                ? "Safe for future read-only checks"
+                : "Validate profile first"}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-950/35 p-4">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+              Masked Account
+            </p>
+            <p className="mt-2 text-sm font-bold text-slate-200">
+              {awsProfileValidation?.account_id_masked ?? "Hidden until validated"}
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-slate-950/35 p-4 sm:flex-row md:flex-col">
+            <button
+              onClick={onRefreshProfiles}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-black text-white transition hover:bg-white/10"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Refresh Profiles
+            </button>
+
+            <button
+              onClick={() => onValidateProfile(selectedAwsProfile)}
+              disabled={!hasProfiles || isValidatingAwsProfile}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-2 text-sm font-black text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              {isValidatingAwsProfile ? "Validating..." : "Validate Profile"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 function App() {
 
   const [scanResult, setScanResult] = useState(null);
@@ -1383,6 +1537,11 @@ function App() {
   const [backendStatus, setBackendStatus] = useState("checking");
   const [openingReportType, setOpeningReportType] = useState(null);
   const [apiStatus, setApiStatus] = useState(null);
+  const [awsProfiles, setAwsProfiles] = useState([]);
+  const [selectedAwsProfile, setSelectedAwsProfile] = useState("");
+  const [awsProfileValidation, setAwsProfileValidation] = useState(null);
+  const [awsProfileStatus, setAwsProfileStatus] = useState("checking");
+  const [isValidatingAwsProfile, setIsValidatingAwsProfile] = useState(false);
 
   const heroSummary = scanResult?.summary;
   const heroFindings = scanResult?.findings ?? [];
@@ -1432,9 +1591,85 @@ function App() {
     }
   }
 
+  async function loadAwsProfiles() {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/aws/profiles`);
+      const profiles = response.data?.profiles ?? [];
+
+      setAwsProfiles(profiles);
+
+      if (profiles.length === 0) {
+        setSelectedAwsProfile("");
+        setAwsProfileValidation(null);
+        setAwsProfileStatus("missing");
+        return;
+      }
+
+      setSelectedAwsProfile((currentProfile) => {
+        if (currentProfile && profiles.includes(currentProfile)) {
+          return currentProfile;
+        }
+
+        if (profiles.includes("cloudsec-auditor")) {
+          return "cloudsec-auditor";
+        }
+
+        return profiles[0];
+      });
+
+      setAwsProfileStatus("ready");
+    } catch (error) {
+      setAwsProfiles([]);
+      setSelectedAwsProfile("");
+      setAwsProfileValidation(null);
+      setAwsProfileStatus("error");
+    }
+  }
+
+  async function handleValidateAwsProfile(profileName = selectedAwsProfile) {
+    if (!profileName) {
+      showToast(
+        "error",
+        "No AWS profile found",
+        "Configure an AWS CLI profile first, then refresh profiles."
+      );
+      return;
+    }
+
+    try {
+      setIsValidatingAwsProfile(true);
+      setAwsProfileStatus("checking");
+
+      const response = await axios.get(
+        `${API_BASE_URL}/api/aws/profiles/${encodeURIComponent(profileName)}/validate`
+      );
+
+      setAwsProfileValidation(response.data);
+      setAwsProfileStatus("valid");
+
+      showToast(
+        "success",
+        "AWS profile validated",
+        "Profile is ready for future read-only AWS checks. No credential values were exposed."
+      );
+    } catch (error) {
+      setAwsProfileValidation(null);
+      setAwsProfileStatus("error");
+
+      const message =
+        error?.response?.data?.message ??
+        "AWS profile validation failed. Check your AWS CLI configuration.";
+
+      showToast("error", "Profile validation failed", message);
+    } finally {
+      setIsValidatingAwsProfile(false);
+    }
+  }
+
   useEffect(() => {
     checkBackendHealth();
     loadLatestReports();
+    loadAwsProfiles();
 
     const healthInterval = setInterval(() => {
       checkBackendHealth();
@@ -1627,6 +1862,17 @@ function App() {
           </div>
         </div>
       </section>
+      <AWSProfileStatusPanel
+        awsProfiles={awsProfiles}
+        selectedAwsProfile={selectedAwsProfile}
+        setSelectedAwsProfile={setSelectedAwsProfile}
+        awsProfileValidation={awsProfileValidation}
+        awsProfileStatus={awsProfileStatus}
+        isValidatingAwsProfile={isValidatingAwsProfile}
+        onValidateProfile={handleValidateAwsProfile}
+        onRefreshProfiles={loadAwsProfiles}
+      />
+
       <FindingsExplorerSection scanResult={scanResult} />
       <SecurityCoverageSection />
       <WorkflowSection />
