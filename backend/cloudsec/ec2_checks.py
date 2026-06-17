@@ -205,12 +205,38 @@ def get_scan_regions(session) -> list[str]:
 def run_ec2_security_checks(session) -> list[dict]:
     """
     Runs all real EC2 read-only security checks.
+
+    Output behavior:
+    - If public SSH/RDP exposure is found, return the risky security group findings.
+    - If no exposure is found, return one clean summary finding instead of one row per region.
     """
 
-    findings = []
+    all_findings = []
     regions = get_scan_regions(session)
 
     for region in regions:
-        findings.extend(check_public_admin_ports_in_region(session, region))
+        all_findings.extend(check_public_admin_ports_in_region(session, region))
 
-    return findings
+    failed_findings = [
+        finding for finding in all_findings
+        if finding.get("status") == "Failed"
+    ]
+
+    if failed_findings:
+        return failed_findings
+
+    scanned_region_count = len(regions)
+
+    return [
+        build_ec2_finding(
+            finding_id="EC2-REAL-001",
+            check="Public SSH/RDP exposure",
+            severity="Info",
+            status="Passed",
+            resource="ec2-security-groups",
+            region="multi-region",
+            evidence=f"No security groups exposing SSH or RDP publicly were detected across {scanned_region_count} enabled region(s).",
+            remediation="Continue restricting administrative ports to trusted networks only.",
+        )
+    ]
+
