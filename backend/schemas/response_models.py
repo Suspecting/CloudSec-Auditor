@@ -60,3 +60,15 @@ class AwsProfilesResponse(BaseModel):
     profiles: list[str]
     count: int
     credential_values_exposed: bool
+
+
+class AwsProfileValidationResponse(BaseModel):
+    status: str
+    profile: str
+    valid: bool
+    account_id_masked: str | None = None
+    arn_preview: str | None = None
+    user_id_preview: str | None = None
+    credential_values_exposed: bool
+    safe_for_read_only_scan: bool
+    message: str | None = None
