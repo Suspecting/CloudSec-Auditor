@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
+from core.error_handlers import register_error_handlers
 from routes.report_routes import router as report_router
 from routes.scan_routes import router as scan_router
 from routes.status_routes import router as status_router
@@ -21,6 +22,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+register_error_handlers(app)
 
 app.include_router(status_router)
 app.include_router(scan_router)

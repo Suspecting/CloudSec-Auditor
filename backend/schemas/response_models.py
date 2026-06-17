@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -45,3 +45,11 @@ class GenerateReportsResponse(BaseModel):
 class LatestReportsResponse(BaseModel):
     status: str
     reports: dict[str, Any]
+
+
+class ErrorResponse(BaseModel):
+    status: str
+    error_type: str
+    message: str
+    path: str
+    details: Optional[list[dict[str, Any]]] = None
