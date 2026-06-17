@@ -86,3 +86,9 @@ desktop/frontend/dist/
 # Electron build outputs
 desktop/frontend/release/
 desktop/frontend/dist/
+
+# Backend binary build outputs
+backend/build/
+backend/dist/
+backend/*.spec
+desktop/frontend/release-win/

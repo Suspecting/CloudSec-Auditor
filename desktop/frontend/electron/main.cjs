@@ -105,6 +105,7 @@ function startBackend() {
       PYTHONUNBUFFERED: "1",
     },
     stdio: ["ignore", backendLogFd, backendLogFd],
+    windowsHide: true,
     detached: false,
   });
 
