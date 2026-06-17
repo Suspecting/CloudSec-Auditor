@@ -403,6 +403,8 @@ CloudSec Auditor supports real AWS read-only security scanning through a local A
 | S3 | Bucket versioning | Checks whether buckets have versioning enabled |
 | EC2 | Public SSH exposure | Detects security groups exposing TCP/22 publicly |
 | EC2 | Public RDP exposure | Detects security groups exposing TCP/3389 publicly |
+| CloudTrail | Trail configured | Detects missing CloudTrail trails |
+| CloudTrail | Logging enabled | Checks whether CloudTrail trails are actively logging |
 
 ### Security Model
 
@@ -454,5 +456,5 @@ The most common initial finding is a missing IAM account password policy.
 
 ### Current Limitation
 
-Real AWS scanning and report export are implemented for IAM, S3, and EC2 security group checks.
+Real AWS scanning and report export are implemented for IAM, S3, EC2 security group, and CloudTrail checks.
 <!-- REAL_AWS_MODE_END -->
