@@ -1,18 +1,18 @@
 from datetime import datetime, timezone
 
+from cloudsec.iam_checks import run_iam_security_checks
 from cloudsec.risk_score import calculate_summary
-from services.aws_session_service import get_safe_profile_identity
+from services.aws_session_service import create_aws_session, get_safe_profile_identity
 
 
 def run_aws_scan_skeleton(profile_name: str) -> dict:
     """
-    Runs the safe foundation for real AWS read-only scanning.
+    Runs real AWS read-only scan foundation.
 
-    Current behavior:
-    - validates the selected AWS CLI profile
+    Current checks:
+    - validates selected AWS CLI profile
     - confirms STS identity works
-    - returns scan metadata
-    - returns empty findings until real IAM/S3/EC2/CloudTrail checks are added
+    - runs real IAM read-only checks
 
     Security note:
     This function never exposes AWS access keys, secret keys, session tokens,
@@ -20,8 +20,11 @@ def run_aws_scan_skeleton(profile_name: str) -> dict:
     """
 
     identity = get_safe_profile_identity(profile_name)
+    session = create_aws_session(profile_name)
 
     findings = []
+    findings.extend(run_iam_security_checks(session))
+
     summary = calculate_summary(findings)
 
     return {
@@ -38,5 +41,5 @@ def run_aws_scan_skeleton(profile_name: str) -> dict:
         },
         "summary": summary,
         "findings": findings,
-        "message": "AWS read-only scan foundation is working. Real service checks will be added next.",
+        "message": "AWS read-only IAM checks completed successfully.",
     }
