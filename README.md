@@ -78,6 +78,22 @@ It simulates AWS security checks across IAM, S3, EC2, CloudTrail, encryption, an
 ```text
 CloudSec-Auditor/
 ├── backend/
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── error_handlers.py
+│   │   └── logging_config.py
+│   │
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   ├── report_routes.py
+│   │   ├── scan_routes.py
+│   │   └── status_routes.py
+│   │
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   └── response_models.py
+│   │
 │   ├── cloudsec/
 │   │   ├── __init__.py
 │   │   ├── cloudtrail_checks.py
@@ -87,6 +103,7 @@ CloudSec-Auditor/
 │   │   ├── report_generator.py
 │   │   ├── risk_score.py
 │   │   └── s3_checks.py
+│   │
 │   ├── main.py
 │   └── requirements.txt
 │
