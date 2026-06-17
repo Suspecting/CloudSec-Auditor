@@ -387,6 +387,15 @@ Planned improvements:
 This project is built for defensive cloud security auditing, learning, and portfolio demonstration. It should only be used on cloud accounts and environments where proper authorization exists.
 
 <!-- REAL_AWS_MODE_START -->
+## Sanitized Sample Output
+
+Example sanitized real AWS read-only scan output is available in the `samples/` folder:
+
+- [`sample_aws_readonly_scan_sanitized.json`](samples/sample_aws_readonly_scan_sanitized.json)
+- [`sample_aws_readonly_scan_sanitized.md`](samples/sample_aws_readonly_scan_sanitized.md)
+
+These samples remove account-specific identity details while preserving the structure of real scan results.
+
 ## Real AWS Read-Only Mode
 
 CloudSec Auditor supports real AWS read-only security scanning through a local AWS CLI profile. The backend validates the selected profile, confirms AWS identity through STS, and runs defensive checks without exposing credential values.

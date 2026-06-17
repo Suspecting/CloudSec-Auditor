@@ -1,0 +1,126 @@
+{
+    "tool": "CloudSec Auditor",
+    "mode": "aws-read-only",
+    "scan_target": "cloudsec-auditor-profile",
+    "generated_at": "2026-06-17T00:00:00+00:00",
+    "aws_identity": {
+        "profile": "cloudsec-auditor-profile",
+        "account_id_masked": "1234********",
+        "arn_preview": "arn:aws:iam::12345...",
+        "credential_values_exposed": false,
+        "safe_for_read_only_scan": true
+    },
+    "summary": {
+        "total_checks": 8,
+        "passed": 6,
+        "failed": 2,
+        "critical": 0,
+        "high": 1,
+        "medium": 1,
+        "low": 0,
+        "info": 0,
+        "risk_score": 23
+    },
+    "findings": [
+        {
+            "id": "IAM-REAL-001",
+            "service": "IAM",
+            "check": "Account password policy",
+            "severity": "Medium",
+            "status": "Failed",
+            "resource": "account-password-policy",
+            "region": "global",
+            "evidence": "No IAM account password policy is configured.",
+            "remediation": "Create a strong IAM account password policy with length, complexity, expiration, and reuse controls.",
+            "category": "Identity Security"
+        },
+        {
+            "id": "IAM-REAL-002",
+            "service": "IAM",
+            "check": "Console user MFA",
+            "severity": "Info",
+            "status": "Passed",
+            "resource": "iam-console-users",
+            "region": "global",
+            "evidence": "No console users without MFA were detected. Console users checked: 0.",
+            "remediation": "Continue enforcing MFA for all IAM users with console access.",
+            "category": "Identity Security"
+        },
+        {
+            "id": "IAM-REAL-003",
+            "service": "IAM",
+            "check": "Access key age",
+            "severity": "Info",
+            "status": "Passed",
+            "resource": "iam-access-keys",
+            "region": "global",
+            "evidence": "No active access keys older than 90 days were detected. Keys checked: 1.",
+            "remediation": "Continue rotating access keys regularly and remove unused credentials.",
+            "category": "Identity Security"
+        },
+        {
+            "id": "S3-REAL-001",
+            "service": "S3",
+            "check": "S3 Block Public Access",
+            "severity": "Info",
+            "status": "Passed",
+            "resource": "s3-buckets",
+            "region": "global",
+            "evidence": "No S3 buckets were found in this AWS account.",
+            "remediation": "No action required. Continue keeping public access blocked when buckets are created.",
+            "category": "Storage Security"
+        },
+        {
+            "id": "S3-REAL-002",
+            "service": "S3",
+            "check": "S3 default encryption",
+            "severity": "Info",
+            "status": "Passed",
+            "resource": "s3-buckets",
+            "region": "global",
+            "evidence": "No S3 buckets were found in this AWS account.",
+            "remediation": "No action required. Enable default encryption when buckets are created.",
+            "category": "Storage Security"
+        },
+        {
+            "id": "S3-REAL-003",
+            "service": "S3",
+            "check": "S3 bucket versioning",
+            "severity": "Info",
+            "status": "Passed",
+            "resource": "s3-buckets",
+            "region": "global",
+            "evidence": "No S3 buckets were found in this AWS account.",
+            "remediation": "No action required. Consider enabling versioning when buckets are created.",
+            "category": "Storage Security"
+        },
+        {
+            "id": "EC2-REAL-001",
+            "service": "EC2",
+            "check": "Public SSH/RDP exposure",
+            "severity": "Info",
+            "status": "Passed",
+            "resource": "ec2-security-groups",
+            "region": "multi-region",
+            "evidence": "No security groups exposing SSH or RDP publicly were detected across 17 enabled region(s).",
+            "remediation": "Continue restricting administrative ports to trusted networks only.",
+            "category": "Network Exposure"
+        },
+        {
+            "id": "CT-REAL-001",
+            "service": "CloudTrail",
+            "check": "CloudTrail trail configured",
+            "severity": "High",
+            "status": "Failed",
+            "resource": "cloudtrail",
+            "region": "ap-south-1",
+            "evidence": "No CloudTrail trails were found in this AWS account.",
+            "remediation": "Create a multi-region CloudTrail trail to capture management events across the account.",
+            "category": "Audit Visibility"
+        }
+    ],
+    "message": "AWS read-only IAM, S3, EC2, and CloudTrail checks completed successfully.",
+    "exported_at": "2026-06-17T00:00:00+00:00",
+    "exported_at_display": "17 Jun 2026, 12:00:00 PM IST",
+    "export_stamp": "2026-06-17_14-46-29"
+}
