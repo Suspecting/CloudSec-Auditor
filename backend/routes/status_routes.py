@@ -2,13 +2,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter
 
-from core.config import (
-    APP_NAME,
-    APP_VERSION,
-    REPORTS_DIR,
-    SCAN_MODE,
-    REAL_AWS_MODE_STATUS,
-)
+from core.config import settings
 
 router = APIRouter()
 
@@ -18,10 +12,10 @@ def count_generated_reports():
     Counts generated CloudSec report files in the reports folder.
     """
 
-    if not REPORTS_DIR.exists():
+    if not settings.reports_dir.exists():
         return 0
 
-    report_files = list(REPORTS_DIR.glob("cloudsec_report_*.*"))
+    report_files = list(settings.reports_dir.glob("cloudsec_report_*.*"))
 
     return len(report_files)
 
@@ -29,10 +23,10 @@ def count_generated_reports():
 @router.get("/")
 def root():
     return {
-        "app": APP_NAME,
+        "app": settings.app_name,
         "type": "AWS Security Misconfiguration Scanner",
         "status": "running",
-        "version": APP_VERSION,
+        "version": settings.app_version,
     }
 
 
@@ -50,16 +44,16 @@ def get_api_status():
     Returns backend runtime status for the frontend dashboard.
     """
 
-    reports_available = REPORTS_DIR.exists()
+    reports_available = settings.reports_dir.exists()
 
     return {
-        "app": APP_NAME,
-        "version": APP_VERSION,
-        "mode": SCAN_MODE,
+        "app": settings.app_name,
+        "version": settings.app_version,
+        "mode": settings.scan_mode,
         "api": "online",
         "reports_folder": "available" if reports_available else "missing",
         "generated_reports": count_generated_reports(),
-        "scan_engine": SCAN_MODE,
-        "real_aws_mode": REAL_AWS_MODE_STATUS,
+        "scan_engine": settings.scan_mode,
+        "real_aws_mode": settings.real_aws_mode_status,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }

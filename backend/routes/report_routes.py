@@ -7,14 +7,7 @@ from fastapi.responses import FileResponse
 from cloudsec.mock_data import get_mock_findings
 from cloudsec.risk_score import calculate_summary
 from cloudsec.report_generator import generate_all_reports
-from core.config import (
-    API_BASE_URL,
-    APP_NAME,
-    IST,
-    REPORTS_DIR,
-    SCAN_MODE,
-    SCAN_TARGET,
-)
+from core.config import settings
 
 router = APIRouter()
 
@@ -24,7 +17,10 @@ def format_report_time(report_file: Path):
     Formats latest report modified time in IST for frontend display.
     """
 
-    modified_at = datetime.fromtimestamp(report_file.stat().st_mtime, tz=IST)
+    modified_at = datetime.fromtimestamp(
+        report_file.stat().st_mtime,
+        tz=settings.ist_timezone,
+    )
     return modified_at.strftime("%d %b %Y, %I:%M:%S %p IST")
 
 
@@ -47,14 +43,14 @@ def get_latest_report_file(report_type: str):
 
     extension = report_map[report_type]
 
-    if not REPORTS_DIR.exists():
+    if not settings.reports_dir.exists():
         raise HTTPException(
             status_code=404,
             detail="Reports folder does not exist. Generate a report first.",
         )
 
     report_files = sorted(
-        REPORTS_DIR.glob(f"cloudsec_report_*.{extension}"),
+        settings.reports_dir.glob(f"cloudsec_report_*.{extension}"),
         key=lambda file: file.stat().st_mtime,
         reverse=True,
     )
@@ -78,9 +74,9 @@ def generate_mock_reports():
     summary = calculate_summary(findings)
 
     report_data = {
-        "tool": APP_NAME,
-        "mode": SCAN_MODE,
-        "scan_target": SCAN_TARGET,
+        "tool": settings.app_name,
+        "mode": settings.scan_mode,
+        "scan_target": settings.scan_target,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "summary": summary,
         "findings": findings,
@@ -113,15 +109,15 @@ def get_latest_reports():
             "exported_at": exported_at,
             "html": {
                 "filename": latest_html.name,
-                "url": f"{API_BASE_URL}/api/reports/latest/html",
+                "url": f"{settings.api_base_url}/api/reports/latest/html",
             },
             "json": {
                 "filename": latest_json.name,
-                "url": f"{API_BASE_URL}/api/reports/latest/json",
+                "url": f"{settings.api_base_url}/api/reports/latest/json",
             },
             "markdown": {
                 "filename": latest_markdown.name,
-                "url": f"{API_BASE_URL}/api/reports/latest/markdown",
+                "url": f"{settings.api_base_url}/api/reports/latest/markdown",
             },
         },
     }

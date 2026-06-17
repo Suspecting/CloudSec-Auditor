@@ -4,7 +4,7 @@ from fastapi import APIRouter
 
 from cloudsec.mock_data import get_mock_findings
 from cloudsec.risk_score import calculate_summary
-from core.config import APP_NAME, SCAN_MODE, SCAN_TARGET
+from core.config import settings
 
 router = APIRouter()
 
@@ -22,9 +22,9 @@ def run_mock_scan():
     summary = calculate_summary(findings)
 
     return {
-        "tool": APP_NAME,
-        "mode": SCAN_MODE,
-        "scan_target": SCAN_TARGET,
+        "tool": settings.app_name,
+        "mode": settings.scan_mode,
+        "scan_target": settings.scan_target,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "summary": summary,
         "findings": findings,
