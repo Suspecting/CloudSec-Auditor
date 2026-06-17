@@ -396,6 +396,28 @@ Example sanitized real AWS read-only scan output is available in the `samples/` 
 
 These samples remove account-specific identity details while preserving the structure of real scan results.
 
+## Updated Screenshots
+
+### Real AWS Read-Only Dashboard
+
+![CloudSec Auditor real AWS dashboard](screenshots/v0.2/01_dashboard_aws_scan.png)
+
+### AWS Profile Status
+
+![AWS profile validation card](screenshots/v0.2/02_aws_profile_status.png)
+
+### Findings Explorer
+
+![Findings explorer with real AWS checks](screenshots/v0.2/03_findings_explorer.png)
+
+### Real AWS HTML Report
+
+![Real AWS HTML report](screenshots/v0.2/04_real_aws_html_report.png)
+
+### Reports Section
+
+![Reports section](screenshots/v0.2/05_reports_section.png)
+
 ## Real AWS Read-Only Mode
 
 CloudSec Auditor supports real AWS read-only security scanning through a local AWS CLI profile. The backend validates the selected profile, confirms AWS identity through STS, and runs defensive checks without exposing credential values.
