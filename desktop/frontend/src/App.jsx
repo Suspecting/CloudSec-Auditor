@@ -1719,14 +1719,21 @@ function App() {
 
       setScanResult(scanResponse.data);
       setLastScanAt(new Date());
-      setReportExport(null);
+
+      const reportResponse = await axios.get(
+        `${API_BASE_URL}/api/reports/generate/aws/${encodeURIComponent(selectedAwsProfile)}`
+      );
+
+      setReportExport(reportResponse.data);
+      await loadLatestReports();
 
       const summary = scanResponse.data?.summary;
+      const exportedAt = reportResponse.data?.reports?.exported_at;
 
       showToast(
         "success",
-        "AWS read-only scan completed",
-        `${summary?.total_checks ?? 0} real AWS checks analyzed safely.`
+        "AWS scan and reports completed",
+        `${summary?.total_checks ?? 0} real AWS checks analyzed safely${exportedAt ? ` · Reports exported at ${exportedAt}` : ""}`
       );
     } catch (error) {
       const message =

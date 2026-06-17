@@ -9,6 +9,7 @@ from cloudsec.risk_score import calculate_summary
 from cloudsec.report_generator import generate_all_reports
 from core.config import settings
 from schemas.response_models import GenerateReportsResponse, LatestReportsResponse
+from services.aws_scan_service import run_aws_scan_skeleton
 
 router = APIRouter()
 
@@ -88,6 +89,27 @@ def generate_mock_reports():
     return {
         "status": "success",
         "message": "Reports generated successfully",
+        "reports": report_paths,
+    }
+
+
+
+@router.get("/api/reports/generate/aws/{profile_name}", response_model=GenerateReportsResponse)
+def generate_aws_reports(profile_name: str):
+    """
+    Generates JSON, HTML, and Markdown reports from a real AWS read-only scan.
+
+    Security note:
+    The scan result uses masked AWS identity metadata and never includes access keys,
+    secret keys, or session tokens.
+    """
+
+    report_data = run_aws_scan_skeleton(profile_name)
+    report_paths = generate_all_reports(report_data)
+
+    return {
+        "status": "success",
+        "message": "Real AWS read-only reports generated successfully",
         "reports": report_paths,
     }
 
