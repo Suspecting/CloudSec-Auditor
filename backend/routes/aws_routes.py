@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
 
-from schemas.response_models import AwsProfileValidationResponse, AwsProfilesResponse
+from schemas.response_models import AwsProfileValidationResponse, AwsProfilesResponse, AwsScanResponse
 from services.aws_profile_service import get_available_aws_profiles
+from services.aws_scan_service import run_aws_scan_skeleton
 from services.aws_session_service import (
     explain_aws_validation_error,
     get_safe_profile_identity,
@@ -59,3 +60,31 @@ def validate_aws_profile(profile_name: str):
             status_code=400,
             detail=message,
         )
+
+@router.get(
+    "/api/scan/aws/{profile_name}",
+    response_model=AwsScanResponse,
+)
+def run_aws_read_only_scan(profile_name: str):
+    """
+    Runs the real AWS read-only scan foundation.
+
+    Current version validates the AWS profile and returns safe scan metadata.
+    Real IAM, S3, EC2, and CloudTrail checks will be added in upcoming steps.
+
+    Security note:
+    This endpoint never returns AWS access keys, secret keys, session tokens,
+    or credential values.
+    """
+
+    try:
+        return run_aws_scan_skeleton(profile_name)
+
+    except Exception as error:
+        message = explain_aws_validation_error(error)
+
+        raise HTTPException(
+            status_code=400,
+            detail=message,
+        )
+

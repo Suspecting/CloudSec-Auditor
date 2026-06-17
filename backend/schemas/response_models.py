@@ -72,3 +72,14 @@ class AwsProfileValidationResponse(BaseModel):
     credential_values_exposed: bool
     safe_for_read_only_scan: bool
     message: str | None = None
+
+
+class AwsScanResponse(BaseModel):
+    tool: str
+    mode: str
+    scan_target: str
+    generated_at: str
+    aws_identity: dict[str, Any]
+    summary: dict[str, Any]
+    findings: list[dict[str, Any]]
+    message: str
