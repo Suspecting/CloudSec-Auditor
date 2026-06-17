@@ -552,3 +552,43 @@ The most common initial finding is a missing IAM account password policy.
 
 Real AWS scanning and report export are implemented for IAM, S3, EC2 security group, and CloudTrail checks.
 <!-- REAL_AWS_MODE_END -->
+
+## Desktop App Build
+
+CloudSec Auditor can run as an Electron desktop application.
+
+### Linux AppImage
+
+Build the backend binary first:
+
+    cd backend
+    source .venv/bin/activate
+    python -m PyInstaller --noconfirm --clean --onefile --name cloudsec-backend desktop_server.py
+
+Then build the Electron AppImage:
+
+    cd ../desktop/frontend
+    npm install
+    npm run electron:build
+
+The Linux AppImage is generated inside:
+
+    desktop/frontend/release/
+
+### Desktop Runtime Behavior
+
+The desktop app bundles the React frontend and starts the FastAPI backend automatically from a bundled backend binary.
+
+At runtime:
+
+1. Electron opens the desktop window.
+2. The bundled backend starts on `127.0.0.1:8000`.
+3. The React dashboard connects to the local backend.
+4. Reports open inside a dedicated Electron report window.
+
+AWS credentials are never bundled. The app uses the user's local AWS CLI profile for authorized read-only scanning.
+
+### Windows EXE
+
+Windows builds should be generated on a Windows machine or through GitHub Actions. The Windows installer/portable EXE will use the same Electron app structure, but requires a Windows backend binary built with PyInstaller on Windows.
+
