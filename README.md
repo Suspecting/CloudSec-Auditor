@@ -413,6 +413,52 @@ Example sanitized real AWS read-only scan output is available in the `samples/` 
 
 These samples remove account-specific identity details while preserving the structure of real scan results.
 
+<!-- README_POLISH_START -->
+## Project Status
+
+**CloudSec Auditor** is now a real AWS read-only security posture scanner with a React dashboard, FastAPI backend, boto3-based AWS checks, risk scoring, and exportable JSON, HTML, and Markdown reports.
+
+The project started as a safe AWS security dashboard and has been upgraded into a real read-only AWS auditing tool for authorized environments.
+
+### Current Capabilities
+
+- Detects local AWS CLI profiles safely
+- Validates AWS profile identity through STS
+- Runs real AWS read-only checks using boto3
+- Audits IAM, S3, EC2 security groups, and CloudTrail
+- Calculates severity counts and overall risk score
+- Generates audit-ready JSON, HTML, and Markdown reports
+- Provides a dark cyber-style React dashboard for viewing findings
+- Includes sanitized sample output and updated screenshots
+
+### Real AWS Services Covered
+
+| Service | Checks |
+|---|---|
+| IAM | Password policy, console MFA, access key age |
+| S3 | Block Public Access, default encryption, versioning |
+| EC2 | Public SSH/RDP exposure across enabled regions |
+| CloudTrail | Trail existence and logging visibility |
+
+### Safety Model
+
+- Read-only AWS API calls only
+- No resource creation, modification, or deletion
+- No AWS access keys, secret keys, or session tokens printed
+- AWS account identity is masked in API responses
+- Intended only for authorized cloud security auditing
+
+### Demo Flow
+
+1. Start the FastAPI backend.
+2. Start the React frontend.
+3. Validate the local AWS CLI profile.
+4. Run AWS read-only scan.
+5. Review prioritized findings.
+6. Export JSON, HTML, or Markdown reports.
+
+<!-- README_POLISH_END -->
+
 ## Updated Screenshots
 
 ### Real AWS Read-Only Dashboard
