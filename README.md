@@ -387,6 +387,23 @@ Planned improvements:
 This project is built for defensive cloud security auditing, learning, and portfolio demonstration. It should only be used on cloud accounts and environments where proper authorization exists.
 
 <!-- REAL_AWS_MODE_START -->
+## Smoke Test
+
+After starting the FastAPI backend, run the safe real AWS smoke test:
+
+    python3 scripts/smoke_test_real_aws.py cloudsec-auditor
+
+The smoke test verifies:
+
+- Backend health
+- AWS profile discovery
+- AWS profile validation
+- Real AWS read-only scan execution
+- Real AWS report generation
+- Latest report lookup
+
+The script does not print AWS access keys, secret keys, session tokens, raw account IDs, or full ARNs.
+
 ## Sanitized Sample Output
 
 Example sanitized real AWS read-only scan output is available in the `samples/` folder:
