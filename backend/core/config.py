@@ -36,6 +36,7 @@ class Settings:
     real_aws_mode_status: str = os.getenv("CLOUDSEC_REAL_AWS_MODE", "planned")
 
     api_base_url: str = os.getenv("CLOUDSEC_API_BASE_URL", "http://127.0.0.1:8000")
+    log_level: str = os.getenv("CLOUDSEC_LOG_LEVEL", "INFO")
 
     project_root: Path = field(
         default_factory=lambda: Path(__file__).resolve().parents[2]
@@ -59,6 +60,22 @@ class Settings:
         """
 
         return self.project_root / "reports"
+
+    @property
+    def logs_dir(self) -> Path:
+        """
+        Returns the runtime logs directory path.
+        """
+
+        return self.project_root / "logs"
+
+    @property
+    def backend_log_file(self) -> Path:
+        """
+        Returns the backend log file path.
+        """
+
+        return self.logs_dir / "cloudsec_backend.log"
 
 
 settings = Settings()

@@ -70,3 +70,11 @@ Thumbs.db
 *.tmp
 *.temp
 *.bak
+
+# Runtime logs
+logs/
+*.log
+
+# Runtime logs
+logs/
+*.log
