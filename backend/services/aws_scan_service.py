@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 from cloudsec.iam_checks import run_iam_security_checks
 from cloudsec.risk_score import calculate_summary
+from cloudsec.s3_checks import run_s3_security_checks
 from services.aws_session_service import create_aws_session, get_safe_profile_identity
 
 
@@ -13,6 +14,7 @@ def run_aws_scan_skeleton(profile_name: str) -> dict:
     - validates selected AWS CLI profile
     - confirms STS identity works
     - runs real IAM read-only checks
+    - runs real S3 read-only checks
 
     Security note:
     This function never exposes AWS access keys, secret keys, session tokens,
@@ -24,6 +26,7 @@ def run_aws_scan_skeleton(profile_name: str) -> dict:
 
     findings = []
     findings.extend(run_iam_security_checks(session))
+    findings.extend(run_s3_security_checks(session))
 
     summary = calculate_summary(findings)
 
@@ -41,5 +44,5 @@ def run_aws_scan_skeleton(profile_name: str) -> dict:
         },
         "summary": summary,
         "findings": findings,
-        "message": "AWS read-only IAM checks completed successfully.",
+        "message": "AWS read-only IAM and S3 checks completed successfully.",
     }
