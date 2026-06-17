@@ -127,6 +127,35 @@ function stopBackend() {
   }
 }
 
+
+function openReportWindow(url) {
+  const isLocalReport =
+    url.startsWith("http://127.0.0.1:8000") ||
+    url.startsWith("file://");
+
+  if (!isLocalReport) {
+    shell.openExternal(url);
+    return;
+  }
+
+  const reportWindow = new BrowserWindow({
+    width: 1280,
+    height: 900,
+    minWidth: 900,
+    minHeight: 700,
+    backgroundColor: "#020617",
+    title: "CloudSec Auditor Report",
+    autoHideMenuBar: true,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: true,
+    },
+  });
+
+  reportWindow.loadURL(url);
+}
+
 function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 1440,
@@ -154,7 +183,7 @@ function createWindow() {
   }
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
+    openReportWindow(url);
     return { action: "deny" };
   });
 }
