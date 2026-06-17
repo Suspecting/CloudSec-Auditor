@@ -412,7 +412,7 @@ These samples remove account-specific identity details while preserving the stru
 
 ### Real AWS HTML Report
 
-![Real AWS HTML report](screenshots/v0.2/04_real_aws_html_report.png)
+![AWS HTML report](screenshots/v0.2/04_real_aws_html_report.png)
 
 ### Reports Section
 
