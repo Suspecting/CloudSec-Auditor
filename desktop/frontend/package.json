@@ -43,7 +43,8 @@
     "appId": "com.cloudsec.auditor",
     "productName": "CloudSec Auditor",
     "directories": {
-      "output": "release"
+      "output": "release",
+      "buildResources": "build"
     },
     "files": [
       "dist/**/*",
@@ -54,9 +55,20 @@
       "target": [
         "AppImage"
       ],
-      "category": "Utility"
+      "category": "Utility",
+      "icon": "build/icon.png"
     },
-    "artifactName": "CloudSec-Auditor-${version}.${ext}"
+    "artifactName": "CloudSec-Auditor-${version}.${ext}",
+    "extraResources": [
+      {
+        "from": "../../backend/dist/cloudsec-backend",
+        "to": "backend/cloudsec-backend"
+      },
+      {
+        "from": "build/icon.png",
+        "to": "icon.png"
+      }
+    ]
   },
   "description": "Real AWS read-only security posture scanner desktop app",
   "author": "Prakhar Shakya"

@@ -8,6 +8,15 @@ const isDev = !app.isPackaged;
 
 app.setName("CloudSec Auditor");
 
+function getAppIcon() {
+  if (isDev) {
+    return path.join(__dirname, "../build/icon.png");
+  }
+
+  return path.join(process.resourcesPath, "icon.png");
+}
+
+
 const BACKEND_HOST = "127.0.0.1";
 const BACKEND_PORT = "8000";
 const BACKEND_URL = `http://${BACKEND_HOST}:${BACKEND_PORT}`;
@@ -145,6 +154,7 @@ function openReportWindow(url) {
     minHeight: 700,
     backgroundColor: "#020617",
     title: "CloudSec Auditor Report",
+    icon: getAppIcon(),
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: false,
@@ -164,6 +174,7 @@ function createWindow() {
     minHeight: 760,
     backgroundColor: "#020617",
     title: "CloudSec Auditor",
+    icon: getAppIcon(),
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: false,
